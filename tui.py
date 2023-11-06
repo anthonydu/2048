@@ -1,5 +1,5 @@
-from MineSweeper import MineSweeper
+from GameOf2048 import GameOf2048
 
 
 if __name__ == "__main__":
-    MineSweeper()
+    GameOf2048().start()
