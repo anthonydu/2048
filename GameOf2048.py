@@ -1,12 +1,15 @@
 import numpy as np
 from random import random, randrange
+from copy import deepcopy
 
 
 class GameOf2048:
     DIM = 4
 
     def __init__(self):
+        self.score = 0
         self.board = np.array([[0 for _ in range(self.DIM)]] * self.DIM)
+        self.place_new_number()
 
     def move_arr(self, arr):
         result = []
@@ -15,6 +18,7 @@ class GameOf2048:
             if el != 0:
                 if result and el == prev:
                     result[-1] *= 2
+                    self.score += result[-1]
                     prev = None
                 else:
                     result.append(el)
@@ -45,3 +49,23 @@ class GameOf2048:
         space = empties[randrange(len(empties))]
         value = 2 if random() < 0.9 else 4
         self.board[space] = value
+
+    def game_over(self):
+        sum = 0
+        game = deepcopy(self)
+        game.move("w")
+        if 0 not in game.board:
+            sum += 1
+        game = deepcopy(self)
+        game.move("a")
+        if 0 not in game.board:
+            sum += 1
+        game = deepcopy(self)
+        game.move("s")
+        if 0 not in game.board:
+            sum += 1
+        game = deepcopy(self)
+        game.move("d")
+        if 0 not in game.board:
+            sum += 1
+        return sum == 4
