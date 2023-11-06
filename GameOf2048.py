@@ -1,5 +1,5 @@
 import numpy as np
-import random
+from random import random, randrange
 
 
 class GameOf2048:
@@ -7,19 +7,6 @@ class GameOf2048:
 
     def __init__(self):
         self.board = np.array([[0 for _ in range(self.DIM)]] * self.DIM)
-
-    def start(self):
-        self.place_new_number()
-        while True:
-            print(self.board)
-            key = input()
-            if key == "q":
-                break
-            else:
-                before = self.board.copy()
-                self.move(key)
-                if not np.all(before == self.board):
-                    self.place_new_number()
 
     def move_arr(self, arr):
         result = []
@@ -55,6 +42,6 @@ class GameOf2048:
                 if self.board[i, j] == 0:
                     empties.append((i, j))
 
-        space = empties[random.randrange(len(empties))]
-        value = 2 if random.random() < 0.9 else 4
+        space = empties[randrange(len(empties))]
+        value = 2 if random() < 0.9 else 4
         self.board[space] = value
