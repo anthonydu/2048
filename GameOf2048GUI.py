@@ -26,21 +26,14 @@ class GameOf2048GUI:
         self.window = pygame.display.set_mode((self.WIDTH, self.HEIGHT))
         pygame.display.set_caption("2048 by Anthony Du")
         self.clock = pygame.time.Clock()
-        self.running = True
         self.font = pygame.font.SysFont(None, 80)
         self.game = GameOf2048()
-        while self.running:
+        while True:
             self.clock.tick(self.FPS)
             self.window.fill("#faf8ef")
             self.draw()
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN:
-                    self.on_key_down(event)
-                if event.type == pygame.QUIT:
-                    self.running = False
-
+            self.step()
             pygame.display.flip()
-        pygame.quit()
 
     def draw(self):
         text = self.font.render(str(self.game.score), True, "#776e65")
@@ -77,22 +70,27 @@ class GameOf2048GUI:
             rect = text.get_rect(center=(self.WIDTH / 2, self.HEIGHT / 2 + 25))
             self.window.blit(text, rect)
 
-    def on_key_down(self, event):
-        before = self.game.board.copy()
-        match event.key:
-            case pygame.K_UP:
-                self.game.move("w")
-            case pygame.K_DOWN:
-                self.game.move("s")
-            case pygame.K_LEFT:
-                self.game.move("a")
-            case pygame.K_RIGHT:
-                self.game.move("d")
-            case pygame.K_r:
-                self.game = GameOf2048()
-                return
-        if not np.all(before == self.game.board):
-            self.game.place_new_number()
+    def step(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                quit()
+            if event.type == pygame.KEYDOWN:
+                before = self.game.board.copy()
+                match event.key:
+                    case pygame.K_UP:
+                        self.game.move("w")
+                    case pygame.K_DOWN:
+                        self.game.move("s")
+                    case pygame.K_LEFT:
+                        self.game.move("a")
+                    case pygame.K_RIGHT:
+                        self.game.move("d")
+                    case pygame.K_r:
+                        self.game = GameOf2048()
+                        return
+                if not np.all(before == self.game.board):
+                    self.game.place_new_number()
 
 
 if __name__ == "__main__":
