@@ -1,4 +1,4 @@
-from GameOf2048 import GameOf2048
+from GameOf2048 import Directions, GameOf2048
 import pygame
 import numpy as np
 
@@ -79,13 +79,13 @@ class GameOf2048GUI:
                 before = self.game.board.copy()
                 match event.key:
                     case pygame.K_UP:
-                        self.game.move("w")
+                        self.game.move(Directions.UP)
                     case pygame.K_DOWN:
-                        self.game.move("s")
+                        self.game.move(Directions.DOWN)
                     case pygame.K_LEFT:
-                        self.game.move("a")
+                        self.game.move(Directions.LEFT)
                     case pygame.K_RIGHT:
-                        self.game.move("d")
+                        self.game.move(Directions.RIGHT)
                     case pygame.K_r:
                         self.game = GameOf2048()
                         return

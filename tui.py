@@ -1,4 +1,4 @@
-from GameOf2048 import GameOf2048
+from GameOf2048 import Directions, GameOf2048
 import numpy as np
 
 
@@ -12,7 +12,15 @@ if __name__ == "__main__":
         if key == "q":
             break
         before = game.board.copy()
-        game.move(key)
+        match key:
+            case "w":
+                game.move(Directions.UP)
+            case "a":
+                game.move(Directions.LEFT)
+            case "s":
+                game.move(Directions.DOWN)
+            case "d":
+                game.move(Directions.RIGHT)
         if not np.all(before == game.board):
             game.place_new_number()
             if game.game_over():

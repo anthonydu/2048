@@ -1,6 +1,14 @@
 import numpy as np
 from random import random, randrange
 from copy import deepcopy
+from enum import Enum
+
+
+class Directions(Enum):
+    UP = 1
+    DOWN = 2
+    LEFT = 3
+    RIGHT = 4
 
 
 class GameOf2048:
@@ -30,13 +38,13 @@ class GameOf2048:
     def move(self, key):
         for i in range(self.DIM):
             match key:
-                case "a":
+                case Directions.LEFT:
                     self.board[i, :] = self.move_arr(self.board[i, :])
-                case "d":
+                case Directions.RIGHT:
                     self.board[i, :] = self.move_arr(self.board[i, :][::-1])[::-1]
-                case "w":
+                case Directions.UP:
                     self.board[:, i] = self.move_arr(self.board[:, i])
-                case "s":
+                case Directions.DOWN:
                     self.board[:, i] = self.move_arr(self.board[:, i][::-1])[::-1]
 
     def place_new_number(self):
