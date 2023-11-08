@@ -12,15 +12,8 @@ if __name__ == "__main__":
         if key == "q":
             break
         before = game.board.copy()
-        match key:
-            case "w":
-                game.move(Directions.UP)
-            case "a":
-                game.move(Directions.LEFT)
-            case "s":
-                game.move(Directions.DOWN)
-            case "d":
-                game.move(Directions.RIGHT)
+        if key in iter(Directions):
+            game.move(key)
         if not np.all(before == game.board):
             game.place_new_number()
             if game.game_over():

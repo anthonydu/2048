@@ -12,7 +12,7 @@ import numpy as np
 # game_over
 class GameOf2048AI:
     WIDTH, HEIGHT = 500, 550
-    FPS = 4096
+    FPS = 256
     COLORS = {
         0: (204, 192, 179),
         2: (238, 228, 218),
@@ -44,19 +44,19 @@ class GameOf2048AI:
         self.window.fill("#faf8ef")
         self.draw()
         prev_score = self.game.score
-        prev_ajacent = self.adjacent()
-        self.step(action)
+        valid = self.step(action)
         pygame.display.flip()
         if self.game.game_over():
             return 0, True, self.game.score
+        if not valid:
+            return -100000, False, self.game.score
         else:
             diff = self.game.score - prev_score
-            if diff != 0:
-                return math.log2(diff) * 16 + self.adjacent(), False, self.game.score
-            elif prev_ajacent >= self.adjacent():
-                return -100, False, self.game.score
-            else:
-                return 0, False, self.game.score
+            return (
+                diff + self.adjacent() / 8 + self.exposed() / 8,
+                False,
+                self.game.score,
+            )
 
     def draw(self):
         text = self.font.render(str(self.game.score), True, "#776e65")
@@ -116,42 +116,35 @@ class GameOf2048AI:
                 this = self.game.board[i][j]
                 if this != 0:
                     if i + 1 < self.game.DIM and self.game.board[i + 1][j] == this:
-                        sum += math.log2(this)
+                        sum += this
                     if j + 1 < self.game.DIM and self.game.board[i][j + 1] == this:
-                        sum += math.log2(this)
+                        sum += this
                     if i - 1 >= 0 and self.game.board[i - 1][j] == this:
-                        sum += math.log2(this)
-                    if j - 1 >= 0 and self.game.board[i][j - 1] / this > 2:
-                        sum += math.log2(this)
-                    if i + 1 < self.game.DIM and self.game.board[i + 1][j] > this:
-                        sum -= math.log2(self.game.board[i + 1][j] / this) * 2
-                    if j + 1 < self.game.DIM and self.game.board[i][j + 1] > this:
-                        sum -= math.log2(self.game.board[i][j + 1] / this) * 2
-                    if i - 1 >= 0 and self.game.board[i - 1][j] > this:
-                        sum -= math.log2(self.game.board[i - 1][j] / this) * 2
-                    if j - 1 >= 0 and self.game.board[i][j - 1] > this:
-                        sum += math.log2(self.game.board[i][j - 1] / this) * 2
+                        sum += this
+                    if j - 1 >= 0 and self.game.board[i][j - 1] == this:
+                        sum += this
+                    if i + 1 < self.game.DIM and self.game.board[i + 1][j] / this > 1:
+                        sum -= 2 ** (self.game.board[i + 1][j] / this)
+                    if j + 1 < self.game.DIM and self.game.board[i][j + 1] / this > 1:
+                        sum -= 2 ** (self.game.board[i][j + 1] / this)
+                    if i - 1 >= 0 and self.game.board[i - 1][j] / this > 1:
+                        sum -= 2 ** (self.game.board[i - 1][j] / this)
+                    if j - 1 >= 0 and self.game.board[i][j - 1] / this > 1:
+                        sum += 2 ** (self.game.board[i][j - 1] / this)
         return sum
 
     def exposed(self):
         sum = 0
         for i in range(self.game.DIM):
             for j in range(self.game.DIM):
-                surrounded = True
                 this = self.game.board[i][j]
                 if this != 0:
-                    if i + 1 < self.game.DIM and self.game.board[i + 1][j] == 0:
-                        sum += 16 - math.log2(this)
-                        surrounded = False
-                    if j + 1 < self.game.DIM and self.game.board[i][j + 1] == 0:
-                        sum += 16 - math.log2(this)
-                        surrounded = False
-                    if i - 1 >= 0 and self.game.board[i - 1][j] == 0:
-                        sum += 16 - math.log2(this)
-                        surrounded = False
-                    if j - 1 >= 0 and self.game.board[i][j - 1] == 0:
-                        sum += 16 - math.log2(this)
-                        surrounded = False
-                    if surrounded:
-                        sum -= 16 - math.log2(this)
-        return sum / 16
+                    if i + 1 < self.game.DIM and self.game.board[i + 1][j] != 0:
+                        sum -= this
+                    if j + 1 < self.game.DIM and self.game.board[i][j + 1] != 0:
+                        sum -= this
+                    if i - 1 >= 0 and self.game.board[i - 1][j] != 0:
+                        sum -= this
+                    if j - 1 >= 0 and self.game.board[i][j - 1] != 0:
+                        sum -= this
+        return sum

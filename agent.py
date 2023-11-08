@@ -30,7 +30,7 @@ class Agent:
         self.memory.append((state, action, reward, next_state, done))
 
     def train_long_memory(self):
-        self.epsilon *= 9 / 10
+        self.epsilon *= 99 / 100
         if len(self.memory) > BATCH_SIZE:
             mini_sample = random.sample(self.memory, BATCH_SIZE)
         else:

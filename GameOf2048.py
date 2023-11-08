@@ -1,14 +1,14 @@
 import numpy as np
 from random import random, randrange
 from copy import deepcopy
-from enum import Enum
+from enum import StrEnum
 
 
-class Directions(Enum):
-    UP = 1
-    DOWN = 2
-    LEFT = 3
-    RIGHT = 4
+class Directions(StrEnum):
+    UP = "w"
+    DOWN = "s"
+    LEFT = "a"
+    RIGHT = "d"
 
 
 class GameOf2048:
@@ -61,19 +61,19 @@ class GameOf2048:
     def game_over(self):
         sum = 0
         game = deepcopy(self)
-        game.move("w")
+        game.move(Directions.UP)
         if 0 not in game.board:
             sum += 1
         game = deepcopy(self)
-        game.move("a")
+        game.move(Directions.LEFT)
         if 0 not in game.board:
             sum += 1
         game = deepcopy(self)
-        game.move("s")
+        game.move(Directions.DOWN)
         if 0 not in game.board:
             sum += 1
         game = deepcopy(self)
-        game.move("d")
+        game.move(Directions.RIGHT)
         if 0 not in game.board:
             sum += 1
         return sum == 4
